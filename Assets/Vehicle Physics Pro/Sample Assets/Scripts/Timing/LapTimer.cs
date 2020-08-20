@@ -159,7 +159,7 @@ namespace VehiclePhysics.Timing
                     m_bestTime = lapTime;
 
                     print("New Lap best lap true");
-                    //bestLap = true;
+                    bestLap = true;
                     PlayerPrefs.SetFloat("BestLap", lapTime);
                     ghostManager.AutoSaveReplay(); // ---------------------------------------------------------------------------------------------------------------------------------------------
                     ghostManager.StartRecording();
@@ -218,9 +218,9 @@ namespace VehiclePhysics.Timing
                 if (bestLap == false)
                 {
                     print("OnTimerHIt");
-                    //ghostManager.SaveTemporaryReplay(); // ---------------------------------------------------
-                    ghostManager.StartRecording(); // -------------------------------------------------------------------------------------------------------------------------------------------                    
+                    ghostManager.SaveTemporaryReplay(); // ---------------------------------------------------
                     ghostManager.PlayGhost(); // ---------------------------------------------------
+                    ghostManager.StartRecording(); // -------------------------------------------------------------------------------------------------------------------------------------------                    
                     bestLap = true;
                     StartCoroutine(WaitASec(1));                    
                 }                

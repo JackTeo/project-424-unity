@@ -59,11 +59,13 @@ public class GhostManager : MonoBehaviour
                 string path = EditorUtility.SaveFilePanel("SaveToAsset", "Assets/Replays/", "defaultName", "asset").Trim();
                 string filename = Path.GetFileName(path);
 
+                tempVehicle.gameObject.SetActive(true);
                 VPReplayAsset replayAsset = tempVPReplay.SaveReplayToAsset();
+                tempVehicle.gameObject.SetActive(false);
                 AssetDatabase.CreateAsset(replayAsset, "Assets/Replays/" + filename);
                 AssetDatabase.SaveAssets();
 
-                Debug.Log(tempVPReplay.recordedData.Count);
+                Debug.Log("Temp Replay saved - " + tempVPReplay.recordedData.Count);
             }
 
             if (GUI.Button(new Rect(posX + paddings * 2 + btnWidth, posY + boxHeight - btnHeight - 8, btnWidth, btnHeight), "Load"))
@@ -110,10 +112,12 @@ public class GhostManager : MonoBehaviour
 
     public void SaveTemporaryReplay()
     {
+        VPReplayAsset replayAsset = vehicleVPReplay.SaveReplayToAsset();
         tempVehicle.gameObject.SetActive(true);
-        tempVPReplay = vehicleVPReplay;
-        tempVPReplay.gameObject.SetActive(false);
-        print("Save temporary replay " + tempVPReplay.recordedData.Count);        
+        //tempVPReplay = vehicleVPReplay;
+        tempVPReplay.LoadReplayFromAsset(replayAsset);
+        tempVehicle.gameObject.SetActive(false);
+        print("Save temporary replay " + tempVPReplay.recordedData.Count);
     }
 
     string FormatLapTime(float t)
@@ -135,7 +139,7 @@ public class GhostManager : MonoBehaviour
     void Update()
     {
         if (resetLapRecord) { ResetLapRecord(); }
-        Debug.Log(vehicleVPReplay.recordedData.Count);
+        //Debug.Log(vehicleVPReplay.recordedData.Count);
     }
 
     void FixedUpdate()
