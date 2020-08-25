@@ -815,7 +815,7 @@ PrefabInstance:
         type: 3}
       propertyPath: predefinedReplay
       value: 
-      objectReference: {fileID: 11400000, guid: 7ab7b7a70f82d91498871c6ebe34b869,
+      objectReference: {fileID: 11400000, guid: 4501bee58d8a6394c9d0268dba6b33af,
         type: 2}
     - target: {fileID: 4116892636824451342, guid: 89f86da0002dfa549bb80908bb13bad3,
         type: 3}
@@ -5958,6 +5958,7 @@ MonoBehaviour:
   replayController: {fileID: 2108903464}
   showGui: 1
   resetLapRecord: 0
+  ghostON: 0
 --- !u!1001 &4029780527169725421
 PrefabInstance:
   m_ObjectHideFlags: 0

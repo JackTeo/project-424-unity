@@ -60,12 +60,12 @@ namespace VehiclePhysics.Timing
         GUIStyle m_style = new GUIStyle();
         GUIStyle m_bigStyle = new GUIStyle();
 
-        public GhostManager ghostManager; // ---------------------------------------------------------------------------------------------------------------------------------------------
-        public bool bestLap = false; // ---------------------------------------------------------------------------------------------------------------------------------------------
+        public GhostManager ghostManager; // ----------------------------------------------------------------------------------------------------------------------------------------
+        bool readyToSaveFlag = true; // ----------------------------------------------------------------------------------------------------------------------------------------
 
         void Start()
         {
-            m_bestTime = PlayerPrefs.GetFloat("BestLap");// ---------------------------------------------------------------------------------------------------------------------------------------------
+            m_bestTime = PlayerPrefs.GetFloat("BestLap"); // ---------------------------------------------------------------------------------------------------------------------------------------------
         }
 
         void OnValidate()
@@ -145,7 +145,7 @@ namespace VehiclePhysics.Timing
 
 
         void NewLap(float t)
-        {            
+        {
             m_laps.Add(t);
 
             m_lastTime = t;
@@ -158,14 +158,7 @@ namespace VehiclePhysics.Timing
 
                     m_bestTime = lapTime;
 
-                    print("New Lap best lap true");
-                    bestLap = true;
-                    PlayerPrefs.SetFloat("BestLap", lapTime);
-                    ghostManager.AutoSaveReplay(); // ---------------------------------------------------------------------------------------------------------------------------------------------
-                    ghostManager.StartRecording();
-                }
-                else { bestLap = false;
-                    print("New Lap best lap false");
+                    PlayerPrefs.SetFloat("BestLap", lapTime); // ---------------------------------------------------------------------------------------------------------------------------------------------
                 }
             }
 
@@ -215,15 +208,16 @@ namespace VehiclePhysics.Timing
 
             if (sector == 0)
             {
-                if (bestLap == false)
+                if (readyToSaveFlag)
                 {
-                    print("OnTimerHIt");
-                    ghostManager.SaveTemporaryReplay(); // ---------------------------------------------------
-                    ghostManager.PlayGhost(); // ---------------------------------------------------
-                    ghostManager.StartRecording(); // -------------------------------------------------------------------------------------------------------------------------------------------                    
-                    bestLap = true;
-                    StartCoroutine(WaitASec(1));                    
-                }                
+                    readyToSaveFlag = false;
+                    ghostManager.SaveTemporaryReplay(); // ---------------------------------------------------------------------------------------------------------------------------------------------
+                    ghostManager.StartRecording(); // -------------------------------------------------------------------------------------------------------------------------------------------   
+                    if (ghostManager.ghostON) { ghostManager.PlayGhost(); } // ---------------------------------------------------------------------------------------------------------------------------------------------
+                    StartCoroutine(WaitASec(1));
+                }
+                
+
 
                 // Start line
 
@@ -406,11 +400,10 @@ namespace VehiclePhysics.Timing
             m_bigStyle.normal.textColor = Color.white;
         }
 
-        IEnumerator WaitASec(int sec)
+        IEnumerator WaitASec(int sec) // ---------------------------------------------------------------------------------------------------------------------------------------------
         {
             yield return new WaitForSeconds(sec);
-            //print("Wait A Sec!!");
-            //bestLap = false;
+            readyToSaveFlag = true;
         }
     }
 

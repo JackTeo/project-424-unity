@@ -27,11 +27,27 @@ public class GhostManager : MonoBehaviour
     private List<VPReplay.Frame> currentReplay = new List<VPReplay.Frame>();
     //private List<VPReplay.Frame> recordedReplay = new List<VPReplay.Frame>();
 
+    public bool ghostON;
+
     // Control box on bottom left corner
     void OnGUI()
     {
         if (showGui)
         {
+            GUIStyle styleON = new GUIStyle(GUI.skin.button);
+            GUIStyle styleOFF = new GUIStyle(GUI.skin.button);
+
+            if (ghostON)
+            {
+                styleON.normal.textColor = Color.green;
+                styleOFF.normal.textColor = Color.white;
+            }
+            else
+            {
+                styleON.normal.textColor = Color.white;
+                styleOFF.normal.textColor = Color.green;
+            }
+
             float paddings = 8;
             float rows = 2;
             float columns = 2;
@@ -44,13 +60,14 @@ public class GhostManager : MonoBehaviour
             float posY = Screen.height - boxHeight - paddings;
 
             GUI.Box(new Rect(posX, posY, boxWidth, boxHeight), "Ghost Mode");
-            if (GUI.Button(new Rect(posX + paddings, posY + boxHeight - (btnHeight * rows) - paddings - paddings / 2 * (rows - 1), btnWidth, btnHeight), "Start"))
+            if (GUI.Button(new Rect(posX + paddings, posY + boxHeight - (btnHeight * rows) - paddings - paddings / 2 * (rows - 1), btnWidth, btnHeight), "ON", styleON))
             {
-                PlayGhost();
+                ghostON = true;
             }
 
-            if (GUI.Button(new Rect(posX + paddings * 2 + btnWidth, posY + boxHeight - (btnHeight * rows) - paddings - paddings / 2 * (rows - 1), btnWidth, btnHeight), "Stop"))
+            if (GUI.Button(new Rect(posX + paddings * 2 + btnWidth, posY + boxHeight - (btnHeight * rows) - paddings - paddings / 2 * (rows - 1), btnWidth, btnHeight), "OFF", styleOFF))
             {
+                ghostON = false;
                 ghostVehicle.gameObject.SetActive(false);
             }
 
@@ -98,7 +115,7 @@ public class GhostManager : MonoBehaviour
         resetLapRecord = false;
     }
 
-    public void AutoSaveReplay()
+    public void AutoSaveReplay() // TEMPORARY DISABLE
     {
         VPReplayAsset replayAsset = vehicleVPReplay.SaveReplayToAsset();
         UnityEditor.AssetDatabase.CreateAsset(replayAsset, "Assets/Replays/Ghost Best Lap" /*+ DateTime.Now.ToString("dd MMM yyyy")*/ + ".asset");
@@ -114,7 +131,6 @@ public class GhostManager : MonoBehaviour
     {
         VPReplayAsset replayAsset = vehicleVPReplay.SaveReplayToAsset();
         tempVehicle.gameObject.SetActive(true);
-        //tempVPReplay = vehicleVPReplay;
         tempVPReplay.LoadReplayFromAsset(replayAsset);
         tempVehicle.gameObject.SetActive(false);
         print("Save temporary replay " + tempVPReplay.recordedData.Count);
@@ -139,7 +155,6 @@ public class GhostManager : MonoBehaviour
     void Update()
     {
         if (resetLapRecord) { ResetLapRecord(); }
-        //Debug.Log(vehicleVPReplay.recordedData.Count);
     }
 
     void FixedUpdate()
@@ -157,14 +172,15 @@ public class GhostManager : MonoBehaviour
 
     IEnumerator StartGhost()
     {
-        for (int i = 0; i < currentReplay.Count; i++)
+        print(currentReplay.Count);
+        for (int i = 0; i < currentReplay.Count - 1; i++)
         {
             ghostVehicle.MovePosition(currentReplay[i].position);
             ghostVehicle.MoveRotation(currentReplay[i].rotation);
-
+            //print(i);
+            //print(ghostVehicle.angularVelocity); // angularVelocity stops at 5360 frame
             yield return new WaitForFixedUpdate();
         }
         ghostVehicle.gameObject.SetActive(false);
     }
-
 }
